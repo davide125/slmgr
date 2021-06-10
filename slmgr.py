@@ -152,14 +152,14 @@ def importpart(sl, name, filename, count=0):
             interface = "ide_hdd"
         else:
             interface = "scsi_hdd"
-        dataarea = f"""\t\t\t<diskarea name="harddriv">\n\t\t\t\t<disk name="{output_name}" sha1="{sha1}" writeable="yes" />\n\t\t\t</diskarea>"""
+        dataarea = f"""\t\t\t<diskarea name="harddriv">\n\t\t\t\t<disk name="{output_name}" sha1="{sha1}" writeable="yes"/>\n\t\t\t</diskarea>"""
     elif suffix == ".iso":
         (output_name, sha1) = importcd(sl, name, filename)
         partname = "cdrom"
         if count > 0:
             partname = f"{partname}{count}"
         interface = "cdrom"
-        dataarea = f"""\t\t\t<diskarea name="cdrom">\n\t\t\t\t<disk name="{output_name}" sha1="{sha1}" />\n\t\t\t</diskarea>"""
+        dataarea = f"""\t\t\t<diskarea name="cdrom">\n\t\t\t\t<disk name="{output_name}" sha1="{sha1}"/>\n\t\t\t</diskarea>"""
     else:
         (output_name, sha1, crc32, size) = importflop(sl, name, filename)
         partname = "flop"
