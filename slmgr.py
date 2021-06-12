@@ -139,7 +139,7 @@ def importflop(sl, name, filename):
     return (base_name, sha1, crc32, size)
 
 
-def importpart(sl, name, filename, count=0):
+def importpart(sl, name, filename, count=0, origin=None):
     suffix = pathlib.Path(filename).suffix.lower()
     if suffix == ".chd":
         (output_name, sha1) = importhdd(sl, name, filename)
@@ -173,19 +173,24 @@ def importpart(sl, name, filename, count=0):
             interface = "TODO"
         dataarea = f"""\t\t\t<dataarea name="flop" size="{size}">\n\t\t\t\t<rom name="{output_name}" size="{size}" crc="{crc32}" sha1="{sha1}"/>\n\t\t\t</dataarea>"""
 
-    partxml = f"""\t\t<part name="{partname}" interface="{interface}">\n{dataarea}\n\t\t</part>"""
+    if origin:
+        originxml = f"""\t\t\t<!-- Origin: {origin} -->\n"""
+    else:
+        originxml = ""
+
+    partxml = f"""\t\t<part name="{partname}" interface="{interface}">\n{originxml}{dataarea}\n\t\t</part>"""
 
     return partxml
 
 
-def importparts(sl, name, filenames):
+def importparts(sl, name, filenames, origin=None):
     parts = []
     if len(filenames) == 1:
         count = 0
     else:
         count = 1
     for filename in filenames:
-        parts.append(importpart(sl, name, filename, count))
+        parts.append(importpart(sl, name, filename, count, origin))
         count += 1
 
     xml = f"""\t<software name="{name}">\n\t\t<description>TODO</description>\n\t\t<year>TODO</year>\n\t\t<publisher>TODO</publisher>\n"""
@@ -212,12 +217,13 @@ def list():
 @click.argument("sl")
 @click.argument("name")
 @click.argument("filename", type=click.Path(exists=True, dir_okay=False), nargs=-1)
-def importp(sl, name, filename):
+@click.option("-o", "--origin")
+def importp(sl, name, filename, origin):
     if len(name) > 16:
         click.echo(f"{name} must be 16 chars or less", err=True)
         sys.exit(1)
 
-    xml = importparts(sl, name, filename)
+    xml = importparts(sl, name, filename, origin)
     click.echo(xml)
 
 
