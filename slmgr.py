@@ -183,7 +183,7 @@ def importpart(sl, name, filename, count=0, origin=None):
     return partxml
 
 
-def importparts(sl, name, filenames, origin=None):
+def importparts(sl, name, filenames, origin=None, version=None):
     parts = []
     if len(filenames) == 1:
         count = 0
@@ -193,7 +193,12 @@ def importparts(sl, name, filenames, origin=None):
         parts.append(importpart(sl, name, filename, count, origin))
         count += 1
 
-    xml = f"""\t<software name="{name}">\n\t\t<description>TODO</description>\n\t\t<year>TODO</year>\n\t\t<publisher>TODO</publisher>\n"""
+    if version:
+        versionxml = f"""\t\t<info name="version" value="{version}"/>\n"""
+    else:
+        versionxml = ""
+
+    xml = f"""\t<software name="{name}">\n\t\t<description>TODO</description>\n\t\t<year>TODO</year>\n\t\t<publisher>TODO</publisher>\n{versionxml}"""
     for part in parts:
         xml += f"{part}\n"
     xml += """\t</software>"""
@@ -218,12 +223,13 @@ def list():
 @click.argument("name")
 @click.argument("filename", type=click.Path(exists=True, dir_okay=False), nargs=-1)
 @click.option("-o", "--origin")
-def importp(sl, name, filename, origin):
+@click.option("-v", "--version")
+def importp(sl, name, filename, origin, version):
     if len(name) > 16:
         click.echo(f"{name} must be 16 chars or less", err=True)
         sys.exit(1)
 
-    xml = importparts(sl, name, filename, origin)
+    xml = importparts(sl, name, filename, origin, version)
     click.echo(xml)
 
 
