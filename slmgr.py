@@ -211,6 +211,7 @@ def validateSoftwareList(sl):
     cmd = ["xmllint", "--noout", "--valid", os.path.join("hash", f"{sl}.xml")]
     runCommand(cmd)
 
+
 @click.group()
 def cli():
     """A simple CLI to inspect and manage MAME software list definitions"""
@@ -237,6 +238,7 @@ def importp(sl, name, filename, origin, version):
     xml = importparts(sl, name, filename, origin, version)
     click.echo(xml)
 
+
 @cli.command()
 @click.argument("sl", nargs=-1)
 @click.option("-q", "--quiet", is_flag=True)
@@ -254,6 +256,7 @@ def validate(sl, quiet, verbose):
                 click.echo(".", nl=False)
     if not quiet and not verbose:
         click.echo()
+
 
 if __name__ == "__main__":
     cli()
