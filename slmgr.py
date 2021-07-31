@@ -167,7 +167,7 @@ def importpart(sl, name, filename, count=0, origin=None):
             partname = f"{partname}{count}"
         if size == 368640 or size == 1228800:
             interface = "floppy_5_25"
-        elif size == 737280 or size == 1474560 or size == 1720320:
+        elif size == 737280 or size == 1474560 or size == 1720320 or size == 901120:
             interface = "floppy_3_5"
         else:
             interface = "TODO"
