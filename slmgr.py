@@ -26,9 +26,13 @@ def requireCommands(commands):
         sys.exit(1)
 
 
-def runCommand(cmd):
+def runCommand(cmd, shell=False):
     p = subprocess.run(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        shell=shell,
     )
     if p.returncode != 0:
         click.echo(p.stdout, err=True)
@@ -256,6 +260,21 @@ def validate(sl, quiet, verbose):
                 click.echo(".", nl=False)
     if not quiet and not verbose:
         click.echo()
+
+
+@cli.command()
+@click.option("-c", "--commit", required=False)
+@click.argument("sl", required=False)
+def whatsnew(commit, sl):
+    requireCommands(["git", "sed", "sort"])
+    cmd = ["git", "diff"]
+    if commit:
+        cmd.append(commit)
+    if sl:
+        cmd.append(os.path.join("hash", sl))
+    cmd += ["|", "sed", "-n", r"'s|^\+\s*<description>\(.*\)</description>|\1|p'"]
+    p = runCommand(" ".join(cmd), shell=True)
+    click.echo(p.stdout)
 
 
 if __name__ == "__main__":
